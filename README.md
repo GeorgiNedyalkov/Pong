@@ -8,6 +8,7 @@ Making my right of passage
 2. Create the Game class
     - Initialize the game
     - Run the game
+    - Create the event que
     - Exit on pressing escape
     - Shutdown the game
     - Create the entry point for the game
