@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 		printf("Could not create SDL Renderer: %s", SDL_GetError());
 	}
 
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (renderer == NULL)
 	{
 		printf("Could not create an SDL Renderer: %s", SDL_GetError());
@@ -46,9 +46,7 @@ int main(int argc, char** argv)
 	Vector2 ballPosition;
 	ballPosition.x = WINDOW_WIDTH / 2.0f;
 	ballPosition.y = WINDOW_HEIGHT / 2.0f;
-	int ballDir;
-	Vector2 ballVelocity = { 100.0f, 50.0f };
-
+	Vector2 ballVelocity = { 400.0f, -100.0f };
 
 	// PROCESS INPUT
 	SDL_Event event;
@@ -103,11 +101,44 @@ int main(int argc, char** argv)
 		}
 
 		// Update ball
+		ballPosition.x += ballVelocity.x * deltaTime;
+		ballPosition.y += ballVelocity.y * deltaTime;
 
 
+		// Collision
 
+		// Does the ball collide with the paddle
 
+		// calculate the absolute difference between the paddly y position and ball y position
+		float diff = paddlePosition.y - ballPosition.y;
+		diff = (diff > 0) ? diff : -diff;
+		// paddle w:25 h: 150 
+		// ball   w:25 h: 25
+		if (diff < (150 / 2.0f) + 25 &&
+			ballPosition.x < 25.0f)
+		{
+			ballVelocity.x *= -1;
+		}
+		else if (ballPosition.x <= 0)
+		{
+			printf("Game over! \n");
+			running = false;
+		}
+		else if (ballPosition.x >= WINDOW_WIDTH - 25)
+		{
+			ballVelocity.x *= -1;
+		}
 
+		// top and bottom wall collisions
+		else if (ballPosition.y <= 0)
+		{
+			ballVelocity.y *= -1;
+		}
+		else if (ballPosition.y >= WINDOW_HEIGHT - 25)
+		{
+			ballVelocity.y *= -1;
+		}
+		
 
 		// DRAW SCENE 
 		// Set the render color
@@ -126,8 +157,16 @@ int main(int argc, char** argv)
 			25,
 			150
 		};
-
 		SDL_RenderFillRect(renderer, &paddle);
+
+		// Draw the ball: width and height of 15
+		SDL_Rect ball{
+			static_cast<int>(ballPosition.x),
+			static_cast<int>(ballPosition.y),
+			25,
+			25
+		};
+		SDL_RenderFillRect(renderer, &ball);
 
 		// Swap the front an back buffer
 		SDL_RenderPresent(renderer);
