@@ -1,2 +1,3 @@
 ﻿  main.cpp
-  Pong.vcxproj -> D:\code\pong\x64\Debug\Pong.exe
+D:\G\code\Pong\main.cpp(49,6): warning C4101: 'ballDir': unreferenced local variable
+  Pong.vcxproj -> D:\G\code\Pong\x64\Debug\Pong.exe
