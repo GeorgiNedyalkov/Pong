@@ -42,11 +42,13 @@ int main(int argc, char** argv)
 	paddlePosition.y = WINDOW_HEIGHT / 2.0f;
 	int paddleDir;
 
-	// Define Ball position and direction
+	// Define Ball position, velocity and direction
 	Vector2 ballPosition;
 	ballPosition.x = WINDOW_WIDTH / 2.0f;
 	ballPosition.y = WINDOW_HEIGHT / 2.0f;
 	int ballDir;
+	Vector2 ballVelocity = { 100.0f, 50.0f };
+
 
 	// PROCESS INPUT
 	SDL_Event event;
@@ -85,10 +87,27 @@ int main(int argc, char** argv)
 		float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
 		mTicksCount = SDL_GetTicks();
 
+		// Update paddle
 		if (paddleDir != 0)
 		{
 			paddlePosition.y += paddleDir * 300.0f * deltaTime;
+
+			if (paddlePosition.y <= 150 / 2.0f) 
+			{
+				paddlePosition.y = 150 / 2.0f;
+			}
+			else if (paddlePosition.y >= WINDOW_HEIGHT - 150 / 2.0f)
+			{
+				paddlePosition.y = WINDOW_HEIGHT - 150 / 2.0f;
+			}
 		}
+
+		// Update ball
+
+
+
+
+
 
 		// DRAW SCENE 
 		// Set the render color
@@ -100,7 +119,7 @@ int main(int argc, char** argv)
 		// Set the draw color to white to draw actors
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-		// Draw the first paddle with a width of 25 pixels and height of 150 pixels
+		// Draw the first paddle: width = 25, height = 150 
 		SDL_Rect paddle{ 
 			static_cast<int>(paddlePosition.x),
 			static_cast<int>(paddlePosition.y - (150 / 2.0f)),
