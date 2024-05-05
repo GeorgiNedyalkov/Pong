@@ -42,6 +42,12 @@ int main(int argc, char** argv)
 	paddlePosition.y = WINDOW_HEIGHT / 2.0f;
 	int paddleDir;
 
+	Vector2 paddlePosition2;
+	// 25 is the thickness of the paddle
+	paddlePosition2.x = WINDOW_WIDTH - 25;
+	paddlePosition2.y = WINDOW_HEIGHT / 2.0f;
+	int paddleDir2;
+
 	// Define Ball position, velocity and direction
 	Vector2 ballPosition;
 	ballPosition.x = WINDOW_WIDTH / 2.0f;
@@ -79,6 +85,16 @@ int main(int argc, char** argv)
 			paddleDir += 1;
 		}
 
+		paddleDir2 = 0;
+		if (keyboard[SDL_SCANCODE_UP])
+		{
+			paddleDir2 -= 1;
+		}
+		else if (keyboard[SDL_SCANCODE_DOWN])
+		{
+			paddleDir2 += 1;
+		}
+
 		// UPDATE GAME
 
 		// Calculate deltaTime and update the mTicksCount
@@ -100,25 +116,43 @@ int main(int argc, char** argv)
 			}
 		}
 
+		// Update paddle 2
+		if (paddleDir2 != 0)
+		{
+			paddlePosition2.y += paddleDir2 * 300.0f * deltaTime;
+
+			if (paddlePosition2.y <= 150 / 2.0f) 
+			{
+				paddlePosition2.y = 150 / 2.0f;
+			}
+			else if (paddlePosition2.y >= WINDOW_HEIGHT - 150 / 2.0f)
+			{
+				paddlePosition2.y = WINDOW_HEIGHT - 150 / 2.0f;
+			}
+		}
+
 		// Update ball
 		ballPosition.x += ballVelocity.x * deltaTime;
 		ballPosition.y += ballVelocity.y * deltaTime;
-
-
-		// Collision
 
 		// Does the ball collide with the paddle
 
 		// calculate the absolute difference between the paddly y position and ball y position
 		float diff = paddlePosition.y - ballPosition.y;
 		diff = (diff > 0) ? diff : -diff;
+		float diff2 = paddlePosition2.y - ballPosition.y;
+		diff2 = (diff2 > 0) ? diff2 : -diff2;
 		// paddle w:25 h: 150 
 		// ball   w:25 h: 25
-		if (diff < (150 / 2.0f) + 25 &&
-			ballPosition.x < 25.0f)
+		if (diff < (150 / 2.0f) + 25 && ballPosition.x < 25.0f)
 		{
 			ballVelocity.x *= -1;
-		}
+		} 
+		// 50 because is the sum of thickenss of the ball and paddle
+		else if (diff2 < (150 / 2.0f) + 25 && ballPosition.x > WINDOW_WIDTH - 50)
+		{
+			ballVelocity.x *= -1;
+		}	
 		else if (ballPosition.x <= 0)
 		{
 			printf("Game over! \n");
@@ -126,11 +160,11 @@ int main(int argc, char** argv)
 		}
 		else if (ballPosition.x >= WINDOW_WIDTH - 25)
 		{
-			ballVelocity.x *= -1;
+			printf("Game over! \n");
+			running = false;
 		}
 
-		// top and bottom wall collisions
-		else if (ballPosition.y <= 0)
+		if (ballPosition.y <= 0)
 		{
 			ballVelocity.y *= -1;
 		}
@@ -139,7 +173,6 @@ int main(int argc, char** argv)
 			ballVelocity.y *= -1;
 		}
 		
-
 		// DRAW SCENE 
 		// Set the render color
 		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -158,6 +191,16 @@ int main(int argc, char** argv)
 			150
 		};
 		SDL_RenderFillRect(renderer, &paddle);
+
+		// Draw the second paddle
+		SDL_Rect paddle2{
+			static_cast<int>(paddlePosition2.x),
+			static_cast<int>(paddlePosition2.y - (150 / 2.0f)),
+			25,
+			150
+		};
+		SDL_RenderFillRect(renderer, &paddle2);
+
 
 		// Draw the ball: width and height of 15
 		SDL_Rect ball{
