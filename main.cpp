@@ -1,14 +1,10 @@
 #include <stdio.h>
 #include <SDL.h>
+#include "Ball.h"
+#include "Math.h"
 
 const int WINDOW_WIDTH = 1024;
 const int WINDOW_HEIGHT = 768;
-
-struct Vector2
-{
-	float x;
-	float y;
-};
 
 int main(int argc, char** argv)
 {
@@ -49,10 +45,8 @@ int main(int argc, char** argv)
 	int paddleDir2;
 
 	// Define Ball position, velocity and direction
-	Vector2 ballPosition;
-	ballPosition.x = WINDOW_WIDTH / 2.0f;
-	ballPosition.y = WINDOW_HEIGHT / 2.0f;
-	Vector2 ballVelocity = { 400.0f, -100.0f };
+	Ball ball;
+	ball.SetPosition({ WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f });
 
 	// PROCESS INPUT
 	SDL_Event event;
@@ -131,48 +125,51 @@ int main(int argc, char** argv)
 			}
 		}
 
+
 		// Update ball
-		ballPosition.x += ballVelocity.x * deltaTime;
-		ballPosition.y += ballVelocity.y * deltaTime;
+		ball.Update(deltaTime);
+
+		//printf("Ball position X: %f, Y: %f \n", ball.GetPosition().x, ball.GetPosition().y);
+		printf("Ball velocity X: %f, Y: %f \n", ball.GetVelocity().x, ball.GetVelocity().y);
 
 		// Does the ball collide with the paddle
 
 		// calculate the absolute difference between the paddly y position and ball y position
-		float diff = paddlePosition.y - ballPosition.y;
+		float diff = paddlePosition.y - ball.mPosition.y;
 		diff = (diff > 0) ? diff : -diff;
-		float diff2 = paddlePosition2.y - ballPosition.y;
+
+		float diff2 = paddlePosition2.y - ball.mPosition.y;
 		diff2 = (diff2 > 0) ? diff2 : -diff2;
-		// paddle w:25 h: 150 
-		// ball   w:25 h: 25
-		if (diff < (150 / 2.0f) + 25 && ballPosition.x < 25.0f)
+
+		if (diff < (150 / 2.0f) + 25 && ball.mPosition.x < 25.0f)
 		{
-			ballVelocity.x *= -1;
+			ball.mVelocity.x *= -1;
 		} 
 		// 50 because is the sum of thickenss of the ball and paddle
-		else if (diff2 < (150 / 2.0f) + 25 && ballPosition.x > WINDOW_WIDTH - 50)
+		else if (diff2 < (150 / 2.0f) + 25 && ball.mPosition.x > WINDOW_WIDTH - 50)
 		{
-			ballVelocity.x *= -1;
+			ball.mVelocity.x *= -1;
 		}	
-		else if (ballPosition.x <= 0)
+		//else if (ballPosition.x <= 0)
+		//{
+		//	printf("Game over! \n");
+		//	running = false;
+		//}
+		//else if (ballPosition.x >= WINDOW_WIDTH - 25)
+		//{
+		//	printf("Game over! \n");
+		//	running = false;
+		//}
+
+		if (ball.mPosition.y <= 0)
 		{
-			printf("Game over! \n");
-			running = false;
+			ball.mVelocity.y *= -1;
 		}
-		else if (ballPosition.x >= WINDOW_WIDTH - 25)
+		else if (ball.mPosition.y >= WINDOW_HEIGHT - 25)
 		{
-			printf("Game over! \n");
-			running = false;
+			ball.mVelocity.y *= -1;
 		}
 
-		if (ballPosition.y <= 0)
-		{
-			ballVelocity.y *= -1;
-		}
-		else if (ballPosition.y >= WINDOW_HEIGHT - 25)
-		{
-			ballVelocity.y *= -1;
-		}
-		
 		// DRAW SCENE 
 		// Set the render color
 		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -202,14 +199,15 @@ int main(int argc, char** argv)
 		SDL_RenderFillRect(renderer, &paddle2);
 
 
+		ball.mPosition = ball.GetPosition();
 		// Draw the ball: width and height of 15
-		SDL_Rect ball{
-			static_cast<int>(ballPosition.x),
-			static_cast<int>(ballPosition.y),
+		SDL_Rect ballRect{
+			static_cast<int>(ball.mPosition.x),
+			static_cast<int>(ball.mPosition.y),
 			25,
 			25
 		};
-		SDL_RenderFillRect(renderer, &ball);
+		SDL_RenderFillRect(renderer, &ballRect);
 
 		// Swap the front an back buffer
 		SDL_RenderPresent(renderer);
