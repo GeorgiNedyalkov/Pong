@@ -73,6 +73,15 @@ void Game::ProcessInput()
 	mPaddle2->ProcessInput(keyboard, 1);
 }
 
+void Game::CheckCollisions(Paddle* paddle)
+{
+	Vector2 paddlePos = paddle->GetPosition();
+	Vector2 ballPos = mBall->GetPosition();
+	float diff = paddlePos.y - mBall->mPosition.y;
+	diff = (diff > 0) ? diff : -diff;
+
+}
+
 void Game::Update()
 {
 	float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;

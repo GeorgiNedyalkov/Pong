@@ -9,6 +9,7 @@ public:
 	bool Initialize();
 	void RunLoop();
 	void Shutdown();
+	void CheckCollisions(class Paddle* paddle);
 
 private:
 	void ProcessInput();
