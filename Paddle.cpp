@@ -8,6 +8,7 @@ Paddle::Paddle():
 	mVelocity{0.0f, 300.0f}
 {}
 
+
 void Paddle::Update(float deltaTime)
 {
 	Vector2 pos = GetPosition();
