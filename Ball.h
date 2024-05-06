@@ -1,5 +1,6 @@
 #pragma once
 #include "Math.h"
+#include "SDL.h"
 
 class Ball
 {
@@ -13,9 +14,11 @@ public:
 	Vector2 GetVelocity() const { return mVelocity; }
 	void SetVelocity(Vector2 velocity) { mVelocity = velocity; }
 
-	Vector2 mPosition;
-	Vector2 mVelocity;
+	void SetStartPosition();
+
 	float mWidth;
 	float mHeight;
+	Vector2 mPosition;
+	Vector2 mVelocity;
 };
 
