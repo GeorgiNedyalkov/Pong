@@ -163,6 +163,9 @@ void Game::GenerateOutput()
 
 void Game::Shutdown()
 {
+	delete mBall;
+	delete mPaddle1;
+	delete mPaddle2;
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
 }
